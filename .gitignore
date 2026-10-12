@@ -1,4 +1,4 @@
-# Données lourdes
+# Données lourdes (versionnées par DVC)
 *.zip
 *.part
 datasets/
@@ -6,6 +6,12 @@ RDD2022_split/
 RDD2022_yolo/
 RDD2022_local/
 RDD2022_runs_local/
+
+# Modèles (versionnés par DVC)
+models/*.pt
+*.pth
+*.ckpt
+*.onnx
 
 # Environnements
 .venv/
@@ -19,19 +25,9 @@ __pycache__/
 .pytest_cache/
 .ipynb_checkpoints/
 
-# Modèles lourds
-*.pt
-*.pth
-*.ckpt
-*.onnx
-
 # MLflow
 mlruns/
 mlflow.db
-
-# DVC
-.dvc/cache/
-.dvc/tmp/
 
 # Système
 .DS_Store

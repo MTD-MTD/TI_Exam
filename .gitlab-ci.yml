@@ -1,0 +1,52 @@
+stages:
+  - lint
+  - test
+  - deploy
+
+variables:
+  PYTHON_VERSION: "3.11"
+  MODEL_PATH: "models/best.pt"
+
+# ---------- Étape 1 : Lint ----------
+lint:
+  stage: lint
+  image: python:3.11-slim
+  before_script:
+    - pip install flake8 black
+  script:
+    - echo "Vérification du style de code..."
+    - flake8 api/ tests/ --max-line-length=120 --ignore=E501,W503 || true
+    - black --check api/ tests/ || true
+  only:
+    - main
+    - merge_requests
+
+# ---------- Étape 2 : Tests ----------
+test:
+  stage: test
+  image: python:3.11-slim
+  before_script:
+    - pip install -r api/requirements.txt
+    - pip install pytest
+  script:
+    - echo "Lancement des tests unitaires..."
+    - pytest tests/ -v --tb=short
+  only:
+    - main
+    - merge_requests
+
+# ---------- Étape 3 : Déploiement ----------
+deploy:
+  stage: deploy
+  image: docker:24.0
+  services:
+    - docker:24.0-dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - echo "Construction de l'image Docker..."
+    - docker build -t "$CI_REGISTRY_IMAGE:latest" .
+    - docker push "$CI_REGISTRY_IMAGE:latest"
+  only:
+    - main
+  when: manual
