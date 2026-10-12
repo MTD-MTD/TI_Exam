@@ -1,0 +1,5 @@
+[core]
+    no_scm = True
+    remote = storage
+['remote "storage"']
+    url = /content/drive/MyDrive/DVC_STORAGE
