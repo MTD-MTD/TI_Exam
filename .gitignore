@@ -1,0 +1,42 @@
+# Données lourdes
+*.zip
+*.part
+datasets/
+RDD2022_split/
+RDD2022_yolo/
+RDD2022_local/
+RDD2022_runs_local/
+
+# Environnements
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Modèles lourds
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# MLflow
+mlruns/
+mlflow.db
+
+# DVC
+.dvc/cache/
+.dvc/tmp/
+
+# Système
+.DS_Store
+Thumbs.db
+
+# Éditeurs
+.vscode/
+.idea/
