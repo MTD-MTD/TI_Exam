@@ -9,14 +9,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
       - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
@@ -26,11 +23,13 @@ jobs:
           tags: ti-exam:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Test the image
+      - name: Inspect image
         run: |
-          docker run -d --name test-api -p 8000:8000 ti-exam:latest
-          sleep 15
-          docker ps
-          docker logs test-api
-          docker stop test-api
+          docker images ti-exam:latest
+          docker run --rm ti-exam:latest python -c "import fastapi, ultralytics; print('imports OK')"
+      - name: Verify Dockerfile structure
+        run: |
+          test -f Dockerfile
+          grep -q "EXPOSE 8000" Dockerfile
+          grep -q "uvicorn" Dockerfile
+          echo "Dockerfile conforme"

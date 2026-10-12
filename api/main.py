@@ -15,7 +15,7 @@ import numpy as np
 from ultralytics import YOLO
 
 # --- Configuration ---
-MODELE_PATH = Path(os.environ.get("MODELE_PATH", "/app/models/best.pt"))
+MODELE_PATH = Path(os.environ.get("MODELE_PATH", "/app/models/best.pt")))
 CLASSES = {0: "D00", 1: "D10", 2: "D20", 3: "D40"}
 IMGSZ = 640
 CONF_THRESHOLD = 0.25

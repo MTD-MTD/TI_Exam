@@ -1,52 +1,64 @@
 stages:
-  - lint
-  - test
+  - data_quality
+  - train
+  - evaluate
   - deploy
 
 variables:
-  PYTHON_VERSION: "3.11"
-  MODEL_PATH: "models/best.pt"
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
 
-# ---------- Étape 1 : Lint ----------
 lint:
-  stage: lint
+  stage: data_quality
   image: python:3.11-slim
   before_script:
     - pip install flake8 black
   script:
-    - echo "Vérification du style de code..."
-    - flake8 api/ tests/ --max-line-length=120 --ignore=E501,W503 || true
-    - black --check api/ tests/ || true
-  only:
-    - main
-    - merge_requests
+    - flake8 api/ tests/ --max-line-length=120 --ignore=E501,W503
+    - black --check api/ tests/
+  only: [main, merge_requests]
 
-# ---------- Étape 2 : Tests ----------
-test:
-  stage: test
+test_unit:
+  stage: data_quality
   image: python:3.11-slim
   before_script:
     - pip install -r api/requirements.txt
-    - pip install pytest
   script:
-    - echo "Lancement des tests unitaires..."
     - pytest tests/ -v --tb=short
-  only:
-    - main
-    - merge_requests
+  only: [main, merge_requests]
 
-# ---------- Étape 3 : Déploiement ----------
+dvc_pull:
+  stage: train
+  image: python:3.11-slim
+  before_script:
+    - pip install dvc
+  script:
+    - dvc pull models/best.pt.dvc
+  artifacts:
+    paths:
+      - models/best.pt
+    expire_in: 1 day
+  only: [main]
+  when: manual
+
+evaluate:
+  stage: evaluate
+  image: python:3.11-slim
+  needs: [dvc_pull]
+  before_script:
+    - pip install -r api/requirements.txt
+  script:
+    - python -c "from ultralytics import YOLO; m = YOLO('models/best.pt'); print('Modele OK')"
+  only: [main]
+  when: manual
+
 deploy:
   stage: deploy
   image: docker:24.0
-  services:
-    - docker:24.0-dind
+  services: [docker:24.0-dind]
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
   script:
-    - echo "Construction de l'image Docker..."
     - docker build -t "$CI_REGISTRY_IMAGE:latest" .
     - docker push "$CI_REGISTRY_IMAGE:latest"
-  only:
-    - main
+  only: [main]
   when: manual

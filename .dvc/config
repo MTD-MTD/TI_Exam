@@ -2,4 +2,4 @@
     no_scm = True
     remote = storage
 ['remote "storage"']
-    url = /content/drive/MyDrive/DVC_STORAGE
+    url = https://huggingface.co/datasets/ton_username_huggingface/rdd2022-crack-model

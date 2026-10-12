@@ -5,5 +5,7 @@ ultralytics==8.4.175
 torch==2.11.0
 pillow==10.4.0
 numpy==1.26.4
-pyngrok==7.2.0
-requests==2.32.3
+opencv-python-headless==4.10.0.84
+httpx==0.27.2
+pytest==8.4.2
+dvc==3.67.1
