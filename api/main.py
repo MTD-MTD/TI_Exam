@@ -3,6 +3,7 @@ API FastAPI pour la détection de fissures routières.
 Modèle : YOLOv8s fine-tuné sur RDD2022 (7 pays).
 """
 
+import os
 from pathlib import Path
 from typing import List
 import io
@@ -14,7 +15,7 @@ import numpy as np
 from ultralytics import YOLO
 
 # --- Configuration ---
-MODELE_PATH = Path("/content/drive/MyDrive/RDD2022_runs_local/yolov8s_phaseA_640_25ep/weights/best.pt")
+MODELE_PATH = Path(os.environ.get("MODELE_PATH", "/app/models/best.pt"))
 CLASSES = {0: "D00", 1: "D10", 2: "D20", 3: "D40"}
 IMGSZ = 640
 CONF_THRESHOLD = 0.25

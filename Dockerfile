@@ -13,10 +13,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Code source
 COPY api/ ./api/
-COPY models/ ./models/
 
-# Expose le port
+# Le modèle sera monté au runtime via volume (voir README)
+# Exemple : docker run -v /chemin/local/best.pt:/app/models/best.pt ...
+
 EXPOSE 8000
 
-# Commande de démarrage
 CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
